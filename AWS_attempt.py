@@ -31,5 +31,37 @@ def a12():
 
     print(response_text)
 
-a12()
+
+def calsue():
+    session = boto3.Session()
+    bedrock = session.client(service_name='bedrock-runtime',region_name="us-east-1") #creates a Bedrock client
+
+
+    image_message = {
+        "role": "user",
+        "content": [
+            { "text": "Please describe the image of an apple." }
+        ],
+    }
+
+
+    response = bedrock.converse(
+        modelId="anthropic.claude-3-sonnet-20240229-v1:0",
+        messages = [image_message],
+        inferenceConfig = {
+            "maxTokens": 1024,
+            "temperature": 0,
+        },
+    )
+
+    response_message = response.get("messages")[0].get("content")
+    print(json.dumps(response_message, indent=2))
+
+
+
+
+
+
+
+calsue()
 
