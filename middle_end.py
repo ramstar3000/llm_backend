@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
 import json
 
 app = FastAPI()
@@ -14,7 +15,7 @@ def get_similar(case_data):
     return "SIMILAR CASES"
 
 
-@app.get("/req")
+@app.post("/req/")
 async def request(case_data):
     summary = get_summary(case_data)
     similar_case = get_similar(case_data)
