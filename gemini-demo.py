@@ -8,7 +8,7 @@ def multiturn_generate_content():
   vertexai.init(project="cambridge-law24cam-7858", location="us-central1")
   model = GenerativeModel(
     "gemini-1.5-flash-001",
-    system_instruction=["""Ypu are a ;egal aid who help create summaries"""]
+    system_instruction=["""Ypu are a legal aid who helps create summaries"""]
   )
   
   info = (model.generate_content("How old is the earth"))
