@@ -4,7 +4,35 @@ from vertexai.generative_models import GenerativeModel, Part
 import vertexai.preview.generative_models as generative_models
 from json import load, dump
 
+from google.cloud.speech_v2 import SpeechClient
+from google.cloud.speech_v2.types import cloud_speech
 
+
+
+
+def speech_to_text(mp3_file):
+   
+    client = SpeechClient()
+
+    with open(mp3_file, 'rb') as audio_file:
+        content = audio_file.read()
+
+    audio = cloud_speech.RecognitionAudio(content=content)
+    config = cloud_speech.RecognitionConfig(
+        encoding=cloud_speech.RecognitionConfig.AudioEncoding.ENCODING_UNSPECIFIED,
+        sample_rate_hertz=16000,
+        language_code="en-US",
+    )
+
+    response = client.recognize(config=config, audio=audio)
+
+    for result in response.results:
+        t = ("Transcript: {}".format(result.alternatives[0].transcript))
+   
+    return t
+
+
+   
 
   
 
