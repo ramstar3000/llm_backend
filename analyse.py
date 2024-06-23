@@ -8,8 +8,6 @@ from google.cloud.speech_v2 import SpeechClient
 from google.cloud.speech_v2.types import cloud_speech
 
 
-
-
 def speech_to_text(mp3_file):
    
     client = SpeechClient()
@@ -132,11 +130,9 @@ def multiturn_generate_content_pass_two(summary, case_one, case_two):
 
 # multiturn_generate_content()
 
-def main():
-
-    # text_info = get
-
-    witness_message = """
+# These will be get rwquested in prod
+global witness_message
+witness_message = """
 
 TRADE MARKS ACT 1994 
  
@@ -221,7 +217,8 @@ range of goods/services sold and how wide the geographical reach of the business
 
     """
 
-    nda = """
+global  nda 
+nda = """
 
     
 1
@@ -293,10 +290,15 @@ Signature + stamp :    Signature + stamp :
 
 """
 
+
+def main():
+
+    # text_info = get
+
+    
     summary_witness = multiturn_generate_content_witness_statements(witness_message)
 
     nda_summary = multiturn_generate_content_witness_statements(nda)
-
 
     cross_compare = multiturn_generate_content(witness_message, nda)
 
@@ -1237,8 +1239,48 @@ Court of Appeal to consider them.
         output.append(summary)
 
     print(sorted_keys)
-    return sorted_keys
+    return output
     
+
+def multiturn_generate_content_joournals(summary):
+    vertexai.init(project="cambridge-law24cam-7858", location="us-central1")
+    model = GenerativeModel(
+    "gemini-1.5-flash-001",
+        system_instruction=["""You are a legal aid is rating which these documents is most similar to the original document"""]
+    )
+
+    info = (model.generate_content(f""" Here is a summary of my case, can you find any journal articles which are relevant to this case? {summary}
+
+    We would like links to articles from cambridge law journal, and any other relevant journals.
+
+
+
+
+"""))
+    
+    return info
+
+
+
+
+
+def find_journals():
+   
+   # Try and find journal articles about the case
+
+   summary_witness = multiturn_generate_content_witness_statements(witness_message)
+
+   nda_summary = multiturn_generate_content_witness_statements(nda)
+
+   cross_compare = multiturn_generate_content(witness_message, nda)
+
+   # Aim is to find journal articles which are relevant
+
+   # Ask gemini
+
+   response = multiturn_generate_content_joournals(summary_witness + nda_summary + cross_compare)
+   print(response)
+
 
     
     
@@ -1249,7 +1291,9 @@ Court of Appeal to consider them.
 
 
 if __name__ == '__main__':
-   main()
+
+   find_journals()
+#    main()
 
 
 
